@@ -1,0 +1,76 @@
+schema: '2.0'
+stages:
+  data_collection:
+    cmd: python src/data/data_collection.py
+    deps:
+    - path: src/data/data_collection.py
+      hash: md5
+      md5: 79f1b5624b181804ae7879281b3210e7
+      size: 1989
+    params:
+      params.yaml:
+        data_collection.test_size: 0.2
+    outs:
+    - path: data/raw
+      hash: md5
+      md5: c960edce4279bb60a8aea114d1bbe2fa.dir
+      size: 382410
+      nfiles: 2
+  pre_preprocessing:
+    cmd: python src/data/data_prep.py
+    deps:
+    - path: data/raw
+      hash: md5
+      md5: c960edce4279bb60a8aea114d1bbe2fa.dir
+      size: 382410
+      nfiles: 2
+    - path: src/data/data_prep.py
+      hash: md5
+      md5: d0af1dccaaff3f2e003b6a2d6ced211d
+      size: 1842
+    outs:
+    - path: data/processed
+      hash: md5
+      md5: 03b6889ab7f483525ac9634e8d696177.dir
+      size: 382394
+      nfiles: 2
+  model_building:
+    cmd: python src/model/model_building.py
+    deps:
+    - path: data/processed
+      hash: md5
+      md5: 03b6889ab7f483525ac9634e8d696177.dir
+      size: 382394
+      nfiles: 2
+    - path: src/model/model_building.py
+      hash: md5
+      md5: 08d43dd0a36c4f85755e63d1ef785012
+      size: 2023
+    params:
+      params.yaml:
+        model_building.n_estimators: 1000
+    outs:
+    - path: models/model.pkl
+      hash: md5
+      md5: 53de93d0cf9edd89907d4246248cf45b
+      size: 51349684
+  model_eval:
+    cmd: python src/model/model_eval.py
+    deps:
+    - path: models/model.pkl
+      hash: md5
+      md5: 53de93d0cf9edd89907d4246248cf45b
+      size: 51349684
+    - path: src/model/model_eval.py
+      hash: md5
+      md5: f60b0b5f9b67058db7c9f7c50f8b2b5a
+      size: 4895
+    outs:
+    - path: reports/metrics.json
+      hash: md5
+      md5: a55a2b20e89c52af269798ac7b528ea7
+      size: 151
+    - path: reports/run_info.json
+      hash: md5
+      md5: 2926e67ff73ffbcc2063ad53a8af427a
+      size: 87
